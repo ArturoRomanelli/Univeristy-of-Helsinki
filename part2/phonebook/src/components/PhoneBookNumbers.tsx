@@ -4,6 +4,7 @@ const PhoneBookNumbers = (props: {
   search: string;
   persons: Person[];
   filteredPersons: Person[];
+  deletePerson: (id: number) => void;
 }) => {
   return (
     <>
@@ -15,6 +16,11 @@ const PhoneBookNumbers = (props: {
                 <tr>
                   <td>{person.name}</td>
                   <td>{person.number}</td>
+                  <td>
+                    <button onClick={() => props.deletePerson(person.id!)}>
+                      delete
+                    </button>
+                  </td>
                 </tr>
               </tbody>
             ))
@@ -23,6 +29,11 @@ const PhoneBookNumbers = (props: {
                 <tr>
                   <td>{person.name}</td>
                   <td>{person.number}</td>
+                  <td>
+                    <button onClick={() => props.deletePerson(person.id!)}>
+                      delete
+                    </button>
+                  </td>
                 </tr>
               </tbody>
             ))}

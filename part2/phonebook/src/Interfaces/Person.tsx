@@ -3,5 +3,8 @@ interface Person {
   number: string;
   id: number;
 }
-
-export type { Person };
+interface CreatePerson {
+  name: string;
+  number: string;
+}
+export type { Person, CreatePerson };
