@@ -6,18 +6,22 @@ import PhoneBookNumbers from "./components/PhoneBookNumbers";
 import phonenumbers from "./services/phonenumbers";
 
 const App = () => {
+  //Hooks
   const [persons, setPersons] = useState<Person[]>([]);
   const [newName, setNewName] = useState("");
   const [newNumber, setNewNumber] = useState("");
   const [search, setSearch] = useState("");
   const [filteredPersons, setFilteredPersons] = useState<Person[]>([]);
-
+  const [message, setMessage] = useState<string | null>(null);
+  const [notificationStyle, setNotificationStyle] = useState<string>("success");
   useEffect(() => {
     (async () => {
       const initialPeople = await phonenumbers.getAll();
       setPersons(initialPeople);
     })();
   }, []);
+
+  //Functions
   const handleChangeSearch = (event: React.ChangeEvent<HTMLInputElement>) => {
     const search = event.target.value;
     setSearch(search);
@@ -52,41 +56,71 @@ const App = () => {
     }
     if (persons.find((person) => person.name === newName) !== undefined) {
       const person = persons.find((person) => person.name === newName);
-      console.log(person);
-      console.log(persons);
-      window.confirm(
+      const confirm = window.confirm(
         `${person?.name} is already added to phonebook, replace the old number with a new one?`
       );
+      if (!confirm) {
+        return;
+      }
       await phonenumbers.update(person!.id, {
         name: newName,
         number: newNumber,
         id: person!.id,
       });
+      setNotificationStyle("success");
+      setMessage(`Updated ${person?.name}`);
+      setTimeout(() => {
+        setMessage(null);
+      }, 5000);
       setPersons(
         persons.map((person) => (person.id === person!.id ? person : person))
       );
+      console.log(persons);
       setNewName("");
       setNewNumber("");
       return;
     }
 
-    const newPerson = await phonenumbers.create({
+    const newPerson = (await phonenumbers.create({
       name: newName,
       number: newNumber,
-    });
+    })) as Person;
     setPersons(persons.concat(newPerson));
+    setNotificationStyle("success");
+
+    const newMessage = setMessage(`Inserted ${newPerson?.name}`);
+    setTimeout(() => {
+      setMessage(null);
+    }, 5000);
+    console.log(newMessage);
+
     setNewName("");
     setNewNumber("");
   };
 
   const deletePerson = async (id: number) => {
-    window.confirm(
+    const confirm = window.confirm(
       `Delete ${persons.find((person) => person.id === id)?.name}`
     );
-    await phonenumbers.deletePerson(id);
+    if (!confirm) {
+      return;
+    }
+    await phonenumbers.deletePerson(id).catch(() => {
+      setNotificationStyle("error");
+      setMessage(
+        `Person ${
+          persons.find((person) => person.id === id)?.name
+        } was already deleted`
+      );
+      setTimeout(() => {
+        setMessage(null);
+      }, 5000);
+    });
+
     setPersons(persons.filter((person) => person.id !== id));
   };
 
+  //Render
   return (
     <div>
       <PhoneBookForm
@@ -95,6 +129,8 @@ const App = () => {
         handleChangeName={handleChangeName}
         handleChangeNumber={handleChangeNumber}
         newNumber={newNumber}
+        message={message}
+        notificationStyle={notificationStyle}
       />
       <Filter search={search} handleChangeSearch={handleChangeSearch} />
       <PhoneBookNumbers
