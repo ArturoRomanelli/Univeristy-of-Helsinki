@@ -1,0 +1,25 @@
+{
+  "name": "backend",
+  "version": "0.0.1",
+  "main": "index.ts",
+  "scripts": {
+    "start": "node index.js",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "node --watch index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ArturoRomanelli/Univeristy-of-Helsinki.git"
+  },
+  "author": "Arturo Romanelli",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/ArturoRomanelli/Univeristy-of-Helsinki/issues"
+  },
+  "homepage": "https://github.com/ArturoRomanelli/Univeristy-of-Helsinki#readme",
+  "description": "",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^5.1.0"
+  }
+}
